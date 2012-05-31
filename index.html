@@ -1,0 +1,22 @@
+<html>
+  <head>
+    <script type='text/javascript'>
+      function cookieview(){
+        if(document.cookie){
+          var cookie = document.cookie;
+          document.getElementById('cookie').innerHTML = cookie;
+        }else {
+          document.getElementById('cookie').innerHTML = "No cookie";
+        }
+      }
+    </script>
+  </head>
+
+  <body>
+    <pre>hello world!</pre>
+    <input type="button" id="cButton" value="click" onclick="cookieview()"/>
+    <div id='cookie-view'>
+      Cookie : <div id='cookie'></div>
+    </div>
+  </body>
+</html>
