@@ -1,0 +1,22 @@
+<html>
+<head>
+  <title>Name Location</title>
+</head>
+
+<body>
+  <table>
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Location</th>
+    </tr>
+    <% data.forEach(function (item, index) { %>
+    <tr>
+      <td><%= item.id %></td>
+      <td><%= item.name %></td>
+      <td><%= item.location %></td>
+    </tr>
+    <% }); %>
+  </table>
+</body>
+</html>
