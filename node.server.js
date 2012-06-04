@@ -1,10 +1,20 @@
 var fs = require('fs');
 var http = require('http');
 var url = require('url');
+var mysql = require('mysql');
+var ejs = require('ejs');
 
-var server = http.createServer(function (request,response){
-    
-  
+
+   var client = mysql.createClient({
+      host: '127.0.0.1',
+      port: 3306,
+      user: 'root',
+      password: '1000742',
+      database: 'nodedb',
+    });
+
+
+    var server = http.createServer(function (request,response){
 
     var date = new Date();
     date.setDate(date.getDate()+7); // after 7day Expires
@@ -34,22 +44,16 @@ var server = http.createServer(function (request,response){
            response.writeHead(307, { 'Location': 'http://127.0.0.1:52273/index.html'});
            response.end();
     }//if-end re.html
-    else if(rest[1] == 'name'){    
-          fs.readFile('name.txt', 'utf8', function (error,data){
-              response.writeHead(200);
-              if(rest[2]){
-                var namedb = data.indexOf(rest[2]);
-                var name_check = data.slice(namedb,data.indexOf(',',namedb));
-                console.log(rest[2] + " ... " + name_check);
-                 if(rest[2] == name_check){ 
-                    var db = data.slice(namedb,data.indexOf('/',namedb)); //db content
-                    response.end(db);
-                 }else{
-                    response.end(rest[2] + '  Not Found!!!');
-                 }
-              }else{
-              response.end(data);
-              }
+    else if(rest[1] == 'name'){
+          fs.readFile('name.html', 'utf8', function (error,data){
+             
+              client.query('select * from products', function(err, result){
+                    response.writeHead(200);
+                    response.end(ejs.render(data,{
+                        data: result
+                    }));
+                });
+
           });//readFile end
     }//if-end name
     else{
