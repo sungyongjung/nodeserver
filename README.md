@@ -9,6 +9,8 @@
 - GET POST DELETE EDIT 구현
 - DB연동
 - response HEADER 구성
+	- redirection
+	- OPTIONS
 
 ####6.4 작업 현황
 - MYSQL 연동 완료
@@ -18,3 +20,5 @@
 	- 	127.0.0.1:52273/list?name=XXX&location=XXX
 - DELETE 완료
 	-	127.0.0.1:52273/list?id=XX
+- EDIT 완료 (GET 방식)
+	-	127.0.0.1:52273/edit?id=XX&name=XXX&location=XXX

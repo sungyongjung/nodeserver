@@ -56,6 +56,24 @@ var ejs = require('ejs');
 
           });//readFile end
     }//if-end name
+    else if(rest[1] == 'edit'){   //GET 방식의 edit
+       var qt = url.parse(request.url).query;
+       var queryid = qt.slice(qt.indexOf('=')+1,qt.indexOf('&'));
+       var queryname = qt.slice(qt.indexOf('=',qt.indexOf('&'))+1,qt.indexOf('&',qt.indexOf('&')+1));
+       var querylocation = qt.slice(qt.lastIndexOf('=')+1);
+
+       //console.log('qt : ' + qt + '\nQid : ' + queryid + '\nQname : ' + queryname + '\nQlocation : ' + querylocation + '\n');
+       client.query('update products set name=?, location=? where id=?',[queryname,querylocation,queryid],function(err){
+          if(err){
+              response.writeHead(200);
+              response.end('NOT EDIT : ' + err + '\n');
+          }
+          else{
+            response.writeHead(307, { 'Location' : 'http://127.0.0.1:52273/list'});
+            response.end('EDIT SECCESS : ' + queryid  + '\n');
+          }
+      });//query end
+    }                                                                                                                   
     else{
        fs.readFile('404.html', function(error, data){
           response.writeHead(404);
@@ -108,7 +126,12 @@ var ejs = require('ejs');
                 response.end('NOT list!\n');
           }
 
-    }
+    }// DELETE end
+
+    else if(request.method == 'OPTIONS'){ 
+            response.writeHead(200,{ 'Allow' : 'GET, POST, DELETE, OPTIONS'});
+            response.end();
+    }// OPTIONS end
 
     }).listen(52273, function(){
     console.log('Server Running at http://127.0.0.1:52273');
