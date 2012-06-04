@@ -44,8 +44,8 @@ var ejs = require('ejs');
            response.writeHead(307, { 'Location': 'http://127.0.0.1:52273/index.html'});
            response.end();
     }//if-end re.html
-    else if(rest[1] == 'name'){
-          fs.readFile('name.html', 'utf8', function (error,data){
+    else if(rest[1] == 'list'){
+          fs.readFile('list.html', 'utf8', function (error,data){
              
               client.query('select * from products', function(err, result){
                     response.writeHead(200);
@@ -64,50 +64,48 @@ var ejs = require('ejs');
     }//else-end
     }//GET-end
 
-    else if(request.method == 'POST'){
-        if(rest[1] == 'name' && rest[3] != 'location'){
-             fs.readFile('name.txt','utf8', function(error,data){
-               fs.writeFile('name.txt', data + rest[2] + ', No Location/\n','utf8');
-               response.writeHead(200);
-               response.end('POST name : ' + rest[2]);
-             });
-        }else if(rest[1] == 'location'){
-            fs.readFile('name.txt','utf8', function(error,data){
-                fs.writeFile('name.txt', data + rest[0] +'No name,  ' + rest[2] + '/\n','utf8');
-                response.writeHead(200);
-                response.end('POST Location : ' + rest[2]);
-             });
-        }else if(rest[1] == 'name' && rest[3] == 'location'){
-            fs.readFile('name.txt','utf8', function(error,data){
-                fs.writeFile('name.txt', data + rest[2] + ',  ' + rest[4] + '/\n','utf8');
-                response.writeHead(200);
-                response.end('POST name : ' + rest[2] + ' location : ' + rest[4]);
-            });
-        }else {
-                response.writeHead(200);
-                response.end('NOT POST');
+   else if(request.method == 'POST'){
+        if(rest[1] == 'list'){
+            var qt = url.parse(request.url).query; //query-title
+           // console.log(request);
+           // console.log('URL : ' + request.url + '\nPATHNAME : ' + pathname + '\nQUERY : ' +qt); 
+            response.writeHead(200);
+            var queryname = qt.slice(qt.indexOf('=')+1,qt.indexOf('&'));
+            var querylocation = qt.slice(qt.indexOf('=',qt.indexOf('&'))+1);
+          //  console.log('name : ' + queryname + '\nlocation : ' + querylocation + '\n');
+            client.query('insert into products (name, location) values (?,?)',[queryname,querylocation
+                ], function(err, results){
+                    if(err){
+                        return console.log('POST ERROR : ' + err + '\n');
+                    }else {
+                        response.writeHead(200);
+                        response.end('POST SUCCESS : '+ queryname + '\n');
+                    }
+                });
+        } //list end
+        else { 
+              response.writeHead(200);
+              response.end('NOT list\n');
         }
-    }//POST_end
+      }//POST_end
 
     else if(request.method == 'DELETE'){
-          if(rest[1] == 'name'){
-              fs.readFile('name.txt','utf8', function(error, data){
-                  if(data.indexOf(rest[2])){
-                      var namedb = data.indexOf(rest[2]);
-                      var db = data.slice(namedb,data.indexOf('\n',namedb)+1);
-                      var deldata = data.replace(db,'');
-                      fs.writeFile('name.txt',deldata,'utf8');
-                      response.writeHead(200);
-                      response.end('DELETE : ' + rest[2]);
+          if(rest[1] == 'list'){
+              var qt = url.parse(request.url).query; //query-title
+              var queryid = qt.slice(qt.indexOf('=')+1);
+              
+              client.query('delete from products where id = ?',[queryid], function(err, results){
+                    if(err){
+                          return console.log('DELETE ERROR : ' + err + '\n');
                     }else{
-                      response.wirteHead(200);
-                      response.end('I CANT FIND USERs NAME');
-                    }
-              }); //readFile end
-          }// if name end
+                          response.writeHead(200);
+                          response.end('DELETE SUCCESS : ' + queryid + '\n');
+                    }});
+
+          }// if list end
           else {
                 response.writeHead(200);
-                response.end('NOT DELETE!');
+                response.end('NOT list!\n');
           }
 
     }
