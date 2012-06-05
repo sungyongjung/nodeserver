@@ -62,6 +62,9 @@ var ejs = require('ejs');
          else if(rest[1] == 'delete'){
              deleteR();
          }
+         else if(rest[1] == 'api'){
+             apiR();
+         }
          else{
             e404R();
          }//if-end 
@@ -70,10 +73,12 @@ var ejs = require('ejs');
 
     
     function postR(){
-        if(rest[1] == 'add'){
+        var qt = url.parse(request.url).query;
+        var qname = qt.slice(0,qt.indexOf('='));
+        if(qname == 'name'){
           addR();
         }
-        else if(rest[1] == 'edit'){
+        else if(qname == 'id'){
           editR();
         }
         else{
@@ -115,15 +120,32 @@ var ejs = require('ejs');
 
     function listR(){
           fs.readFile('list.html', 'utf8', function (error,data){
-            if(rest[2]){
-               client.query('select * from products where id=?',[rest[2]] ,function(error, result){
+            if(rest[2] == 'name'){
+                client.query('select * from products where name=? order by id',[rest[3]] ,function(error, result){
+                    response.writeHead(200);
+                    response.end(ejs.render(data,{
+                        data: result
+                    }));
+               });
+             }
+             else if(rest[2] == 'location'){
+                client.query('select * from products where location=? order by id',[rest[2]] ,function(error, result){
+                    response.writeHead(200);
+                    response.end(ejs.render(data,{
+                        data: result
+                    }));
+               });
+
+             }
+             else if(rest[2]){
+               client.query('select * from products where id=? order by id',[rest[2]] ,function(error, result){
                     response.writeHead(200);
                     response.end(ejs.render(data,{
                         data: result
                     }));
                });
             }else{
-              client.query('select * from products', function(error, result){
+              client.query('select * from products order by id', function(error, result){
                     response.writeHead(200);
                     response.end(ejs.render(data,{
                         data: result
@@ -213,6 +235,14 @@ var ejs = require('ejs');
             response.end();
     } // options-response
 
+
+
+    function apiR(){
+            fs.readFile('api.html', function(error, data){
+                 response.writeHead(200);
+                 response.end(data);
+              }); //readFile-end
+     } // api-response
 
 
     }).listen(52273, function(){

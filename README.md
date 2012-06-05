@@ -21,9 +21,9 @@
 - response Header 수정
 - curl 사용확인
 	- curl -v 127.0.0.1:52273/ (GET)
-	- curl -v 127.0.0.1:52273/edit?'id=1&name=kim&location=pusan' (EDIT: GET방식)
-	- curl -v -d POST 127.0.0.1:52273/add?'name=hong&location=sagun' (POST)
-	- curl -v -X DELETE 127.0.0.1:52273/delete?id=2 (DELETE)
+	- curl -v -d POST 127.0.0.1:52273/list?'id=1&name=kim&location=pusan' (EDIT: POST방식)
+	- curl -v -d POST 127.0.0.1:52273/list?'name=hong&location=sagun' (POST)
+	- curl -v -X DELETE 127.0.0.1:52273/list?id=2 (DELETE)
 	- curl -v -X OPTIONS 127.0.0.1:52273/
 
 ####6.4 작업 현황
