@@ -28,6 +28,9 @@ var ejs = require('ejs');
         case 'GET':
                 getR();
                 break;
+        case 'HEAD':
+                headR();
+                break;
         case 'POST':
                 postR();
                 break;
@@ -87,7 +90,10 @@ var ejs = require('ejs');
 
     } // postR-end
 
-
+    function headR(){
+        response.writeHead(200);
+        response.end();
+    } // Head-end
 
     function indexR(){
             fs.readFile('index.html', function(error, data){
