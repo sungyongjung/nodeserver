@@ -12,6 +12,8 @@
 	- redirection
 	- OPTIONS
 - Cookie 테스트
+
+
 ----
 
 ####6.5 작업 현황
