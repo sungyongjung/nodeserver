@@ -65,7 +65,7 @@ var ejs = require('ejs');
        //console.log('qt : ' + qt + '\nQid : ' + queryid + '\nQname : ' + queryname + '\nQlocation : ' + querylocation + '\n');
        client.query('update products set name=?, location=? where id=?',[queryname,querylocation,queryid],function(err){
           if(err){
-              response.writeHead(200);
+              response.writeHead(404);
               response.end('NOT EDIT : ' + err + '\n');
           }
           else{
@@ -83,32 +83,32 @@ var ejs = require('ejs');
     }//GET-end
 
    else if(request.method == 'POST'){
-        if(rest[1] == 'list'){
+        if(rest[1] == 'add'){
             var qt = url.parse(request.url).query; //query-title
            // console.log(request);
            // console.log('URL : ' + request.url + '\nPATHNAME : ' + pathname + '\nQUERY : ' +qt); 
-            response.writeHead(200);
             var queryname = qt.slice(qt.indexOf('=')+1,qt.indexOf('&'));
             var querylocation = qt.slice(qt.indexOf('=',qt.indexOf('&'))+1);
           //  console.log('name : ' + queryname + '\nlocation : ' + querylocation + '\n');
             client.query('insert into products (name, location) values (?,?)',[queryname,querylocation
                 ], function(err, results){
                     if(err){
-                        return console.log('POST ERROR : ' + err + '\n');
+                        response.writeHead(404);
+                        response.end('POST ERROR : ' + err + '\n');
                     }else {
-                        response.writeHead(200);
+                        response.writeHead(201); //POST 201 Created status code
                         response.end('POST SUCCESS : '+ queryname + '\n');
                     }
                 });
         } //list end
         else { 
-              response.writeHead(200);
+              response.writeHead(404);
               response.end('NOT list\n');
         }
       }//POST_end
 
     else if(request.method == 'DELETE'){
-          if(rest[1] == 'list'){
+          if(rest[1] == 'delete'){
               var qt = url.parse(request.url).query; //query-title
               var queryid = qt.slice(qt.indexOf('=')+1);
               
@@ -116,13 +116,13 @@ var ejs = require('ejs');
                     if(err){
                           return console.log('DELETE ERROR : ' + err + '\n');
                     }else{
-                          response.writeHead(200);
+                          response.writeHead(204);//DELETE 204 No Content status code
                           response.end('DELETE SUCCESS : ' + queryid + '\n');
                     }});
 
           }// if list end
           else {
-                response.writeHead(200);
+                response.writeHead(404);
                 response.end('NOT list!\n');
           }
 

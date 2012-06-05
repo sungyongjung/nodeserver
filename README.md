@@ -11,6 +11,18 @@
 - response HEADER 구성
 	- redirection
 	- OPTIONS
+- Cookie 테스트
+----
+
+####6.5 작업 현황
+- Status Code 수정
+- response Header 수정
+- curl 사용확인
+	- curl -v 127.0.0.1:52273/ (GET)
+	- curl -v 127.0.0.1:52273/edit?'id=1&name=kim&location=pusan' (EDIT: GET방식)
+	- curl -v -d POST 127.0.0.1:52273/add?'name=hong&location=sagun' (POST)
+	- curl -v -X DELETE 127.0.0.1:52273/delete?id=2 (DELETE)
+	- curl -v -X OPTIONS 127.0.0.1:52273/
 
 ####6.4 작업 현황
 - MYSQL 연동 완료
