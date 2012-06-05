@@ -129,7 +129,7 @@ var ejs = require('ejs');
                });
              }
              else if(rest[2] == 'location'){
-                client.query('select * from products where location=? order by id',[rest[2]] ,function(error, result){
+                client.query('select * from products where location=? order by id',[rest[3]] ,function(error, result){
                     response.writeHead(200);
                     response.end(ejs.render(data,{
                         data: result
