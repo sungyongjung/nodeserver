@@ -11,10 +11,10 @@
 - response HEADER 구성
 	- redirection
 	- OPTIONS
-- Cookie 테스트
+- Cookie 테스트     
+    
 
-
-----
+----    
 
 ####6.5 작업 현황
 - Status Code 수정

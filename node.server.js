@@ -21,117 +21,199 @@ var ejs = require('ejs');
 
     var pathname = url.parse(request.url).pathname;
     var rest = pathname.split('/');
+    
 
-    var data = pathname
+    switch(request.method)
+    {
+        case 'GET':
+                getR();
+                break;
+        case 'POST':
+                postR();
+                break;
+        case 'DELETE':
+                deleteR();
+                break;
+        case 'OPTIONS':
+                optionsR();
+                break;
+        defult:
+                e404R();
+                break;
+    }
 
-    if(request.method == 'GET'){
 
-    if(pathname == '/' || pathname == '/index.html'){
-       fs.readFile('index.html', function(error, data){
-           response.writeHead(200, {
-              'Content-Type': 'text/html',
-              'Set-Cookie':[
-                 'username = jung;Expires = ' + date.toUTCString() + '; HttpOnly',
-                 //  'username = jung;Expires = ' + date.toUTCString(),  //No HttpOnly
-                 'age = 27',
-                 'location = koera; path = /'],
-              'Connection': 'close'
-             }); //response.writeHead End
-         response.end(data);
-        }); //readFile-end
-    } //if-end index.html
-    else if(pathname == '/re.html'){
+    function getR(){
+         if(pathname == '/' || pathname == '/index.html'){
+             indexR();
+         }
+         else if(rest[1] == 're'){
+             reindex();
+         }
+         else if(rest[1] == 'list'){
+               listR();
+         }
+         else if(rest[1] == 'add'){
+             addR();  
+         } 
+         else if(rest[1] == 'edit'){
+             editR();
+         }
+         else if(rest[1] == 'delete'){
+             deleteR();
+         }
+         else{
+            e404R();
+         }//if-end 
+
+    } // getR-end
+
+    
+    function postR(){
+        if(rest[1] == 'add'){
+          addR();
+        }
+        else if(rest[1] == 'edit'){
+          editR();
+        }
+        else{
+            e404R();
+        } //if-end
+
+    } // postR-end
+
+
+
+    function indexR(){
+            fs.readFile('index.html', function(error, data){
+                 response.writeHead(200, {
+                     'Content-Type': 'text/html',
+                      'Set-Cookie':[
+                         'username = jung;Expires = ' + date.toUTCString() + '; HttpOnly',
+                         //  'username = jung;Expires = ' + date.toUTCString(),  //No HttpOnly
+                         'age = 27',
+                         'location = koera; path = /'],
+                      'Connection': 'close'
+                 }); //response.writeHead End
+                 response.end(data);
+              }); //readFile-end
+     } // index-response
+
+
+
+
+    function reindex(){
            response.writeHead(307, { 'Location': 'http://127.0.0.1:52273/index.html'});
+           response.end();   
+    } //Redirecte-response
+
+    function relist(){
+           response.writeHead(307, { 'Location': 'http://127.0.0.1:52273/list'});
            response.end();
-    }//if-end re.html
-    else if(rest[1] == 'list'){
+    } //redirecte-list
+
+
+    function listR(){
           fs.readFile('list.html', 'utf8', function (error,data){
-             
-              client.query('select * from products', function(err, result){
+            if(rest[2]){
+               client.query('select * from products where id=?',[rest[2]] ,function(error, result){
+                    response.writeHead(200);
+                    response.end(ejs.render(data,{
+                        data: result
+                    }));
+               });
+            }else{
+              client.query('select * from products', function(error, result){
                     response.writeHead(200);
                     response.end(ejs.render(data,{
                         data: result
                     }));
                 });
-
+            }
           });//readFile end
-    }//if-end name
-    else if(rest[1] == 'edit'){   //GET 방식의 edit
-       var qt = url.parse(request.url).query;
-       var queryid = qt.slice(qt.indexOf('=')+1,qt.indexOf('&'));
-       var queryname = qt.slice(qt.indexOf('=',qt.indexOf('&'))+1,qt.indexOf('&',qt.indexOf('&')+1));
-       var querylocation = qt.slice(qt.lastIndexOf('=')+1);
+    } //list-response
 
-       //console.log('qt : ' + qt + '\nQid : ' + queryid + '\nQname : ' + queryname + '\nQlocation : ' + querylocation + '\n');
-       client.query('update products set name=?, location=? where id=?',[queryname,querylocation,queryid],function(err){
-          if(err){
-              response.writeHead(404);
-              response.end('NOT EDIT : ' + err + '\n');
-          }
-          else{
-            response.writeHead(307, { 'Location' : 'http://127.0.0.1:52273/list'});
-            response.end('EDIT SECCESS : ' + queryid  + '\n');
-          }
-      });//query end
-    }                                                                                                                   
-    else{
-       fs.readFile('404.html', function(error, data){
-          response.writeHead(404);
-          response.end(data);
-        });//readFile-end
-    }//else-end
-    }//GET-end
 
-   else if(request.method == 'POST'){
-        if(rest[1] == 'add'){
+
+
+    function e404E(){
+        response.writeHead(404);
+        response.end('Error : ' + error);
+    } //404-response-with-errorcode
+
+
+
+
+    function e404R(){
+        response.writeHead(404);
+        response.end('Error');
+    } // 404-response-without-errorcode
+
+
+
+    function addR(){
             var qt = url.parse(request.url).query; //query-title
-           // console.log(request);
-           // console.log('URL : ' + request.url + '\nPATHNAME : ' + pathname + '\nQUERY : ' +qt); 
+            // console.log(request);
+            // console.log('URL : ' + request.url + '\nPATHNAME : ' + pathname + '\nQUERY : ' +qt); 
             var queryname = qt.slice(qt.indexOf('=')+1,qt.indexOf('&'));
             var querylocation = qt.slice(qt.indexOf('=',qt.indexOf('&'))+1);
-          //  console.log('name : ' + queryname + '\nlocation : ' + querylocation + '\n');
+            //  console.log('name : ' + queryname + '\nlocation : ' + querylocation + '\n');
             client.query('insert into products (name, location) values (?,?)',[queryname,querylocation
-                ], function(err, results){
-                    if(err){
-                        response.writeHead(404);
-                        response.end('POST ERROR : ' + err + '\n');
-                    }else {
-                        response.writeHead(201); //POST 201 Created status code
-                        response.end('POST SUCCESS : '+ queryname + '\n');
-                    }
-                });
-        } //list end
-        else { 
-              response.writeHead(404);
-              response.end('NOT list\n');
-        }
-      }//POST_end
-
-    else if(request.method == 'DELETE'){
-          if(rest[1] == 'delete'){
-              var qt = url.parse(request.url).query; //query-title
-              var queryid = qt.slice(qt.indexOf('=')+1);
-              
-              client.query('delete from products where id = ?',[queryid], function(err, results){
-                    if(err){
-                          return console.log('DELETE ERROR : ' + err + '\n');
+                ], function(error, results){
+                    if(error){
+                            e404E();
                     }else{
-                          response.writeHead(204);//DELETE 204 No Content status code
-                          response.end('DELETE SUCCESS : ' + queryid + '\n');
-                    }});
+                        relist(); //PRG 307->200
+                    }
+            });
+    } // add-response
 
-          }// if list end
-          else {
-                response.writeHead(404);
-                response.end('NOT list!\n');
-          }
 
-    }// DELETE end
 
-    else if(request.method == 'OPTIONS'){ 
+
+
+    function editR(){
+        var qt = url.parse(request.url).query;
+           var queryid = qt.slice(qt.indexOf('=')+1,qt.indexOf('&'));
+           var queryname = qt.slice(qt.indexOf('=',qt.indexOf('&'))+1,qt.indexOf('&',qt.indexOf('&')+1));
+           var querylocation = qt.slice(qt.lastIndexOf('=')+1);
+
+        //console.log('qt : ' + qt + '\nQid : ' + queryid + '\nQname : ' + queryname + '\nQlocation : ' + querylocation 
+           client.query('update products set name=?, location=? where id=?',[queryname,querylocation,queryid],function(error){
+               if(error){
+                    e404E();
+               }
+               else{
+                relist();
+               }
+            });//query end
+    } // edit-response
+
+
+
+
+    function deleteR(){
+             var qt = url.parse(request.url).query; //query-title
+             var queryid = qt.slice(qt.indexOf('=')+1);
+
+             client.query('delete from products where id = ?',[queryid], function(error, results){
+                if(error){
+                    e404E();
+                }else{
+                    relist();
+                }});
+    } // delete-response
+
+
+
+
+
+    function optionsR(){
             response.writeHead(200,{ 'Allow' : 'GET, POST, DELETE, OPTIONS'});
             response.end();
-    }// OPTIONS end
+    } // options-response
+
+
 
     }).listen(52273, function(){
     console.log('Server Running at http://127.0.0.1:52273');
