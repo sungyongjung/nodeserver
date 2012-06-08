@@ -10,7 +10,7 @@ var ejs = require('ejs');
       port: 3306,
       user: 'root',
       password: '1000742',
-      database: 'nodedb',
+      database: 'nodedb'
     });
 
 
@@ -40,7 +40,7 @@ var ejs = require('ejs');
         case 'OPTIONS':
                 optionsR();
                 break;
-        defult:
+        default:
                 e404R();
                 break;
     }
@@ -50,27 +50,38 @@ var ejs = require('ejs');
          if(pathname == '/' || pathname == '/index.html'){
              indexR();
          }
-         else if(rest[1] == 're'){
-             reindex();
+         else if(rest[1]){
+            switch(rest[1])
+            {
+                case 're':
+                    reindex();
+                    break;
+                case 'list':
+                    listR();
+                    break;
+                case 'add':
+                    addR();
+                    break;
+                case 'edit':
+                    editR();
+                    break;
+                case 'delete':
+                    deleteR();
+                    break;
+                case 'api':
+                    apiR();
+                    break;
+                default :
+                    e404R();
+                    break;
+
+            }
+         }else {
+             e404R();
          }
-         else if(rest[1] == 'list'){
-               listR();
-         }
-         else if(rest[1] == 'add'){
-             addR();  
-         } 
-         else if(rest[1] == 'edit'){
-             editR();
-         }
-         else if(rest[1] == 'delete'){
-             deleteR();
-         }
-         else if(rest[1] == 'api'){
-             apiR();
-         }
-         else{
-            e404R();
-         }//if-end 
+
+
+
 
     } // getR-end
 
@@ -187,7 +198,7 @@ var ejs = require('ejs');
             var querylocation = qt.slice(qt.indexOf('=',qt.indexOf('&'))+1);
             //  console.log('name : ' + queryname + '\nlocation : ' + querylocation + '\n');
             client.query('insert into products (name, location) values (?,?)',[queryname,querylocation
-                ], function(error, results){
+                ], function(error){
                     if(error){
                             e404E();
                     }else{
@@ -224,7 +235,7 @@ var ejs = require('ejs');
              var qt = url.parse(request.url).query; //query-title
              var queryid = qt.slice(qt.indexOf('=')+1);
 
-             client.query('delete from products where id = ?',[queryid], function(error, results){
+             client.query('delete from products where id = ?',[queryid], function(error){
                 if(error){
                     e404E();
                 }else{
