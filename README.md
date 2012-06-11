@@ -15,6 +15,15 @@
     
 
 ----    
+####6.11 작업 현황
+
+- MYSQL -> mongoDB로 변경
+- URL 쳬계 변경
+    - 127.0.0.1:52273/list (목록보기)
+    - 127.0.0.1:52273/add?name=XX&location=XX (추가)
+    - 127.0.0.1:52273/edit?findname=XXX&name=XXX&location=XXX 
+        - (findname검색후 name과 location 수정)
+    - 127.0.0.1:52273/delete?name=XXX (이름 검색후 삭제) 
 
 ####6.5 작업 현황
 - Status Code 수정

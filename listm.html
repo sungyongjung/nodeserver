@@ -1,0 +1,22 @@
+<html>
+<head>
+  <title>Name Location</title>
+</head>
+
+<body>
+  <table>
+        <tr>
+         <th>id</th>
+         <th>Name</th>
+         <th>Location</th>
+        </tr>
+    <% for(x in data){%>
+        <tr>
+         <td><%= data[x]._id %></td>
+         <td><%= data[x].name %></td>
+         <td><%= data[x].location %></td>
+        </tr>
+      <% }%>
+     </table>
+</body>
+</html>
